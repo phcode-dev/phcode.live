@@ -1,0 +1,32 @@
+{
+    "name": "phoenix",
+    "version": "3.2.2-0",
+    "apiVersion": "3.2.2",
+    "homepage": "https://phcode.dev",
+    "issues": {
+        "url": "https://github.com/phcode-dev/phoenix/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/phcode-dev/phcode.live",
+        "branch": "",
+        "SHA": ""
+    },
+    "devDependencies": {
+        "http-server": "14.1.0"
+    },
+    "scripts": {
+        "vulnerabilityCheck": "echo Scanning for vulnarabilities && npm audit --prod",
+        "build": "npm run vulnerabilityCheck",
+        "serve": "http-server ./docs/ -p 8001 -c-1",
+        "serveExternal": "http-server ./docs/ -p 8001 -a 0.0.0.0 --log-ip true -c-1"
+    },
+    "licenses": [
+        {
+            "type": "AGPL-3.0-or-later",
+            "url": "https://github.com/phcode-dev/phoenix/blob/master/LICENSE"
+        }
+    ],
+    "dependencies": {
+    }
+}
