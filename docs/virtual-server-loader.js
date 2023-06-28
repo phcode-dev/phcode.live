@@ -1,5 +1,9 @@
 import {Workbox} from 'https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-window.prod.mjs';
 
+const EVENT_REPORT_ERROR = 'REPORT_ERROR';
+const EVENT_SERVER_READY = 'SERVER_READY';
+const EVENT_GET_PHOENIX_INSTANCE_ID = 'GET_PHOENIX_INSTANCE_ID';
+let PHOENIX_INSTANCE_ID;
 const expectedBaseURL = `${location.origin}/`;
 const urlParams = new URLSearchParams(window.location.search);
 if(urlParams.size){
@@ -34,13 +38,49 @@ function post(eventName, message) {
 
 function reportError(message) {
     console.error(message);
-    post("REPORT_ERROR", message);
+    post(EVENT_REPORT_ERROR, message);
 }
 
 const _serverBroadcastChannel = new BroadcastChannel("virtual_server_broadcast");
 _serverBroadcastChannel.onmessage = function (event) {
     post(event.data.type, event.data)
 }
+let _livePreviewBroadcastChannel;
+
+// messages sent from phoenix parent window tot his iframe
+window.onmessage = function(e) {
+    // broadcast to service worker/tabs.
+    switch (e.data.type) {
+        case 'REQUEST_RESPONSE':
+            _serverBroadcastChannel.postMessage(e.data);
+            break;
+        case 'PHOENIX_INSTANCE_ID':
+            PHOENIX_INSTANCE_ID = e.data.PHOENIX_INSTANCE_ID;
+            let broadcastChannelID = `${PHOENIX_INSTANCE_ID}_livePreview`;
+            if(!_livePreviewBroadcastChannel) {
+                _livePreviewBroadcastChannel = new BroadcastChannel(broadcastChannelID);
+                _livePreviewBroadcastChannel.onmessage = (event) => {
+                    // just pass it on to parent phcode
+                    post(event.data.type, event.data)
+                };
+            } else {
+                console.error("Only one live preview message broadcast channel allowed per iframe. reload page!!!");
+            }
+            postIfServerReady();
+            break;
+        case 'MESSAGE_FROM_PHOENIX':
+            _livePreviewBroadcastChannel.postMessage(e.data);
+            break;
+    }
+};
+
+let serviceWorkerLoaded = false;
+function postIfServerReady() {
+    if(serviceWorkerLoaded && PHOENIX_INSTANCE_ID) {
+        post(EVENT_SERVER_READY, EVENT_SERVER_READY);
+    }
+}
+post(EVENT_GET_PHOENIX_INSTANCE_ID, EVENT_GET_PHOENIX_INSTANCE_ID);
 
 function loadServiceWorker() {
     if (! 'serviceWorker' in navigator) {
@@ -51,8 +91,10 @@ function loadServiceWorker() {
         // https://developer.chrome.com/blog/fresher-sw/#updateviacache
         updateViaCache: 'none'
     });
-    function serverReady() {
+    function serviceWorkerReady() {
         console.log('live preview Service worker loader: Server ready.');
+        serviceWorkerLoaded = true;
+        postIfServerReady();
         if(!localStorage.getItem("loadedTwice")){
             // on first load, we reload the page after service worker is loaded
             // so that the site is cached in service worker cache for offline access.
@@ -62,7 +104,7 @@ function loadServiceWorker() {
         }
     }
 
-    wb.controlling.then(serverReady);
+    wb.controlling.then(serviceWorkerReady);
 
     // Deal with first-run install, if necessary
     wb.addEventListener('installed', (event) => {
