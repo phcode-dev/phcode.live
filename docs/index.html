@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Live Preview Server Connector</title>
+    <script src="virtual-server-loader.js" type="module"></script>
+<!--
+This page should only be loaded once per phcode window and not reloaded for every live preview change.
+This server iframe should be reused. Note that different phcode window may still load this page
+while another phcode window is serving with this server.
+-->
 </head>
 <body>
   Serving Live Preview...
