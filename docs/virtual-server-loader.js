@@ -68,7 +68,7 @@ window.onmessage = function(e) {
             }
             postIfServerReady();
             break;
-        case 'MESSAGE_FROM_PHOENIX':
+        default:
             _livePreviewBroadcastChannel.postMessage(e.data);
             break;
     }
