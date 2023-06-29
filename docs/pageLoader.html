@@ -43,6 +43,7 @@
             const params = Object.fromEntries(urlSearchParams.entries());
             if(!params.broadcastChannel){
                 console.error("Live Preview page loader: Could not resolve live preview broadcast channel", params);
+                return;
             }
             worker.postMessage({
                 type: "setupBroadcast",

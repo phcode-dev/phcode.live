@@ -1,12 +1,5 @@
 import {Workbox} from 'https://storage.googleapis.com/workbox-cdn/releases/6.4.1/workbox-window.prod.mjs';
-
-const TRUSTED_ORIGINS = {
-    'http://localhost:8000': true, // phcode dev server
-    'https://phcode.dev': true,
-    'https://dev.phcode.dev': true,
-    'https://staging.phcode.dev': true,
-    'https://create.phcode.dev': true
-};
+import {TRUSTED_ORIGINS} from "./trustedOrigins.js";
 
 const EVENT_REPORT_ERROR = 'REPORT_ERROR';
 const EVENT_SERVER_READY = 'SERVER_READY';
