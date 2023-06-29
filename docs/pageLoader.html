@@ -35,6 +35,17 @@
                 default: console.error("Live Preview page loader: received unknown message from worker:", event);
             }
         }
+        // https://developer.mozilla.org/en-US/docs/Web/Privacy/Storage_Access_Policy/Errors/CookiePartitionedForeign
+        // iframes are sandboxed by default and if we popout the live preview, those previews wont be
+        // reachable from this sandboxed iframe server. So we have to request access.
+        document.requestStorageAccess().then(
+            () => {
+                console.log("access granted");
+            },
+            () => {
+                console.log("access denied");
+            }
+        );
     </script>
     <script type="module">
         const clientID = "" + Math.round( Math.random()*1000000000);
