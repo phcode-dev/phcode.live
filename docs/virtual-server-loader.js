@@ -13,7 +13,7 @@ if(!parentOrigin){
 } else if (!TRUSTED_ORIGINS[parentOrigin]) {
     alert("This page can only be embedded from trusted domains " + Object.keys(TRUSTED_ORIGINS));
 } else {
-    if(urlParams.size !== 1){
+    if(Array.from(urlParams.entries()).length !== 1){
         alert("virtual server iframe!! This page should not be loaded with URL params other than parentOrigin.");
     }
     function _getBaseURL() {
