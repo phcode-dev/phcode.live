@@ -51,7 +51,7 @@
         // iframes are sandboxed by default and if we popout the live preview, those previews wont be
         // reachable from this sandboxed iframe server. So we have to request access.
         // https://developer.mozilla.org/en-US/docs/Web/API/Document/requestStorageAccess
-        document.requestStorageAccess().then(
+        document.requestStorageAccess && document.requestStorageAccess().then(
             () => {
                 console.log("access granted");
             },
