@@ -31,7 +31,7 @@ if(!self.Serve){
             return Math.round( Math.random()*1000000000000);
         }
 
-        const serve = async function (path, phoenixInstanceID) {
+        const serve = async function (path, phoenixInstanceID, url) {
             path = Path.normalize(path);
             return new Promise(async (resolve, reject) => { // eslint-disable-line
                 function buildResponse(responseData) {
@@ -42,6 +42,7 @@ if(!self.Serve){
                 _serverBroadcastChannel.postMessage({
                     type: "GET_CONTENT",
                     path,
+                    url,
                     requestID,
                     phoenixInstanceID
                 });

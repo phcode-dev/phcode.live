@@ -105,7 +105,7 @@ workbox.routing.registerRoute(
             path = `/${pathSplit.join("/")}`;
         }
 
-        return Serve.serve(path, phoenixInstanceID);
+        return Serve.serve(path, phoenixInstanceID, url.href);
     },
     'GET'
 );
