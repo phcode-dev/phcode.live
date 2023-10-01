@@ -36,7 +36,7 @@ if(!parentOrigin){
     }
 
     function post(eventName, message) {
-        window.top.postMessage({
+        window.parent.postMessage({
             handlerName: "ph-liveServer",
             eventName,
             message
